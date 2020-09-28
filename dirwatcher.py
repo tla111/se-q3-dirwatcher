@@ -3,7 +3,7 @@
 Dirwatcher - A long-running program
 """
 
-__author__ = "???"
+__author__ = "Timothy La (tla111)"
 
 import sys
 

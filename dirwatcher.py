@@ -19,6 +19,7 @@ def search_for_magic(filename, start_line, magic_string):
     # file_dict = {}
     # with open(filename, 'r') as file:
     #     file.read()
+    #
     return
 
 

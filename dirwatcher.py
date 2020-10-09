@@ -31,6 +31,10 @@ def search_for_magic(ns):
                                 "The magic word, " +
                                 ns.magicword.upper() + " was found on line "
                                 + str(index + 1) + " in " + file)
+                        if ns.magicword not in line:
+                            logger.info(
+                                "The magic word, " +
+                                ns.magicword.upper() + " is not found")
     except Exception as e:
         logger.info(e)
 
@@ -56,11 +60,11 @@ def detect_dir_changes(file_dict, ns):
     try:
         for files in file_dict:
             if files not in master_dict:
-                logger.info(files + "has been added to " + ns.dir)
+                logger.info(files + " has been added to " + ns.dir)
                 master_dict[files] = []
         for files in master_dict:
             if files not in file_dict:
-                logger.info(files + "has been removed from " + ns.dir)
+                logger.info(files + " has been removed from " + ns.dir)
                 del master_dict[files]
     except Exception as e:
         logger.info(e)

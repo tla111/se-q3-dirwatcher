@@ -32,7 +32,7 @@ def search_for_magic(ns):
                                 ns.magicword.upper() + " was found on line "
                                 + str(index + 1) + " in " + file)
     except Exception as e:
-        print(e)
+        logger.info(e)
 
 
 def watch_directory(ns):
@@ -46,9 +46,9 @@ def watch_directory(ns):
                 if files.endswith(ns.file):
                     file_dict.setdefault(files, [])
         else:
-            print('No directory found')
+            logger.info('No directory found')
     except Exception as e:
-        print(e)
+        logger.info(e)
     detect_dir_changes(file_dict, ns)
 
 
@@ -63,7 +63,7 @@ def detect_dir_changes(file_dict, ns):
                 logger.info(files + "has been removed from " + ns.dir)
                 del master_dict[files]
     except Exception as e:
-        print(e)
+        logger.info(e)
     search_for_magic(ns)
 
 
@@ -106,9 +106,7 @@ def main(args):
         try:
             watch_directory(ns)
         except Exception as e:
-            # This is an UNHANDLED exception
-            # Log an ERROR level message here
-            pass
+            logger.info(e)
 
         # put a sleep inside my while loop so I don't peg the cpu usage at 100%
         # time.sleep(polling_interval)

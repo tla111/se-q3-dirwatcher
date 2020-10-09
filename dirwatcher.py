@@ -8,31 +8,63 @@ import time
 import signal
 import argparse
 import sys
+import logging
 __author__ = "Timothy La (tla111)"
-'Received help from Joseph'
+'Received help from Joseph & Coach John W'
 
-
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 exit_flag = False
+master_dict = {}
 
 
-def search_for_magic(filename, start_line, magic_string):
-    # file_dict = {}
-    # with open(filename, 'r') as file:
-    #     file.read()
-    #
-    return
+def search_for_magic(ns):
+    try:
+        for file in master_dict:
+            with open(ns.dir + "/" + file, 'r') as f:
+                lines = f.readlines()
+                for index, line in enumerate(lines):
+                    if ns.magicword in line:
+                        if index not in master_dict[file]:
+                            master_dict[file].append(index)
+                            logger.info(
+                                "The magic word, " +
+                                ns.magicword.upper() + " was found on line "
+                                + str(index + 1) + " in " + file)
+    except Exception as e:
+        print(e)
 
 
-def watch_directory(path, magic_string, extension, interval):
+def watch_directory(ns):
     file_dict = {}
-    while not exit_flag:
-        time.sleep(interval)
-        directories = os.listdir(os.path.abspath(path))
-        for files in directories:
-            file_dict[files] = 0
-        # Check if there is a key already in file_dict
-        #   Delete key is there already is
-        print(file_dict)
+    # while not exit_flag:
+    # time.sleep(interval)
+    try:
+        if os.path.isdir(ns.dir):
+            directories = os.listdir(os.path.abspath(ns.dir))
+            for files in directories:
+                if files.endswith(ns.file):
+                    file_dict.setdefault(files, [])
+        else:
+            print('No directory found')
+    except Exception as e:
+        print(e)
+    detect_dir_changes(file_dict, ns)
+
+
+def detect_dir_changes(file_dict, ns):
+    try:
+        for files in file_dict:
+            if files not in master_dict:
+                logger.info(files + "has been added to " + ns.dir)
+                master_dict[files] = []
+        for files in master_dict:
+            if files not in file_dict:
+                logger.info(files + "has been removed from " + ns.dir)
+                del master_dict[files]
+    except Exception as e:
+        print(e)
+    search_for_magic(ns)
 
 
 def create_parser():
@@ -64,7 +96,7 @@ def main(args):
         parser.print_usage()
         sys.exit(1)
 
-     # Hook into these two signals from the OS
+    # Hook into these two signals from the OS
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     # Now my signal_handler will get called if OS sends
@@ -72,8 +104,7 @@ def main(args):
 
     while not exit_flag:
         try:
-            watch_directory(ns.dir, ns.magicword, ns.file, ns.interval)
-            pass
+            watch_directory(ns)
         except Exception as e:
             # This is an UNHANDLED exception
             # Log an ERROR level message here
